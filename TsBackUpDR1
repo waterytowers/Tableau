@@ -1,0 +1,23 @@
+# This location will be used for both backups and log zip files.
+# Make sure to create these directories (workPath and ZipFiles) if they don't exist already
+
+$workPath = 'C:\TableauBackups'
+$zipFiles = 'C:\TableauBackups\Logs'
+   
+Set-Location -Path $workPath
+
+$dt = (Get-Date).ToString('yyyyMMdd')
+$dtLog = (Get-Date).ToString('yyyyMMdd')
+$dtLogD = (Get-Date).AddDays(-2).ToShortDateString()
+
+$backupFile = "backup-$dt.tsbak"
+$LogFileName = "logs-$dtLog.zip"
+
+Write-Verbose -Message "Backing up to: $backupFile"
+Write-Verbose -Message "Ziplogs  to: $zipFiles"
+
+tabadmin ziplogs "$ZipFiles\$LogFileName" -l -n -d "$($dtLogD)" --force
+tabadmin cleanup
+tabadmin backup "$workPath\$backupFile"
+
+Set-Location -Path $home
